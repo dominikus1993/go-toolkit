@@ -13,7 +13,7 @@ type A struct {
 
 func CalculateChecksum(body any) (string, error) {
 	var b bytes.Buffer
-	err := gob.NewDecoder(&b).Decode(body)
+	err := gob.NewEncoder(&b).Encode(body)
 	if err != nil {
 		return "", fmt.Errorf("error calculating checksum: %w", err)
 	}
