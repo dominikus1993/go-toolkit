@@ -7,6 +7,10 @@ import (
 	"fmt"
 )
 
+type A struct {
+	Name string
+}
+
 func CalculateChecksum(body any) (string, error) {
 	var b bytes.Buffer
 	err := gob.NewDecoder(&b).Decode(body)

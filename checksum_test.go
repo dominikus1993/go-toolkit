@@ -16,6 +16,7 @@ func TestChecksumCalculationWhenObjectsAreDiferent(t *testing.T) {
 	obj2 := TestObject{Name: "John", Age: 31}
 	checksum1, err := CalculateChecksum(&obj1)
 	assert.NoError(t, err)
+	assert.NotEmpty(t, checksum1)
 	checksum2, err := CalculateChecksum(&obj2)
 	assert.NoError(t, err)
 	assert.NotEqual(t, checksum1, checksum2)
