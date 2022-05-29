@@ -11,7 +11,7 @@ type A struct {
 	Name string
 }
 
-func CalculateChecksum(body any) (string, error) {
+func CalculateChecksum[T any](body *T) (string, error) {
 	var b bytes.Buffer
 	err := gob.NewEncoder(&b).Encode(body)
 	if err != nil {
