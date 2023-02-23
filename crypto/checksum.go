@@ -1,4 +1,4 @@
-package gotoolkit
+package crypto
 
 import (
 	"bytes"
