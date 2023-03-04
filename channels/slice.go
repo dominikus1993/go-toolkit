@@ -24,6 +24,17 @@ func ToSlice[T any](s <-chan T) []T {
 	return res
 }
 
+func MapFromSlice[T any, TMap any](s []T, fmap func(el T) TMap, size int) <-chan TMap {
+	res := make(chan TMap, size)
+	go func() {
+		for _, v := range s {
+			res <- fmap(v)
+		}
+		close(res)
+	}()
+	return res
+}
+
 func FanIn[T any](ctx context.Context, stream ...<-chan T) <-chan T {
 	var wg sync.WaitGroup
 	out := make(chan T)

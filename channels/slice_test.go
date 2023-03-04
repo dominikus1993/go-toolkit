@@ -22,6 +22,16 @@ func TestToSlice(t *testing.T) {
 	assert.ElementsMatch(t, RangeInt(0, 10), result)
 }
 
+func TestMapFromSlice(t *testing.T) {
+	numbers := []int{1, 2, 3, 4}
+
+	result := MapFromSlice(numbers, func(el int) int { return el * 2 }, 10)
+
+	subject := ToSlice(result)
+	assert.Len(t, subject, len(numbers))
+	assert.ElementsMatch(t, []int{2, 4, 6, 8}, subject)
+}
+
 func BenchmarkToSlice(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		numbers := make(chan int, 10)
@@ -32,7 +42,7 @@ func BenchmarkToSlice(b *testing.B) {
 			close(numbers)
 		}()
 
-		ToSlice(numbers)
+		_ = ToSlice(numbers)
 	}
 }
 
