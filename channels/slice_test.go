@@ -32,6 +32,16 @@ func TestMapFromSlice(t *testing.T) {
 	assert.ElementsMatch(t, []int{2, 4, 6, 8}, subject)
 }
 
+func TestMap(t *testing.T) {
+	arr := []int{1, 2, 3, 4}
+	numbers := FromSlice(arr)
+
+	result := Map(numbers, func(el int) int { return el * 2 }, 10)
+
+	subject := ToSlice(result)
+	assert.Len(t, subject, len(arr))
+	assert.ElementsMatch(t, []int{2, 4, 6, 8}, subject)
+}
 func BenchmarkToSlice(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		numbers := make(chan int, 10)
@@ -64,5 +74,21 @@ func BenchmarkFanIn(b *testing.B) {
 
 		result := FanIn(ctx, numbers, numbers2)
 		ToSlice(result)
+	}
+}
+
+func TestFilter(t *testing.T) {
+	numbers := FromSlice(RangeInt(1, 10))
+	result := Filter(numbers, func(element int) bool { return element%2 == 0 }, 10)
+	subject := ToSlice(result)
+	assert.Len(t, subject, 4)
+	assert.ElementsMatch(t, []int{2, 4, 6, 8}, subject)
+}
+
+func BenchmarkFilter(b *testing.B) {
+	arr := RangeInt(1, 10)
+	for n := 0; n < b.N; n++ {
+		numbers := FromSlice(arr)
+		_ = ToSlice(Filter(numbers, func(element int) bool { return element%2 == 0 }, 1))
 	}
 }

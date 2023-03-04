@@ -35,6 +35,17 @@ func MapFromSlice[T any, TMap any](s []T, fmap func(el T) TMap, size int) <-chan
 	return res
 }
 
+func Map[T any, TMap any](s <-chan T, fmap func(el T) TMap, size int) <-chan TMap {
+	res := make(chan TMap, size)
+	go func() {
+		for v := range s {
+			res <- fmap(v)
+		}
+		close(res)
+	}()
+	return res
+}
+
 func FanIn[T any](ctx context.Context, stream ...<-chan T) <-chan T {
 	var wg sync.WaitGroup
 	out := make(chan T)
@@ -54,6 +65,19 @@ func FanIn[T any](ctx context.Context, stream ...<-chan T) <-chan T {
 	}
 	go func() {
 		wg.Wait()
+		close(out)
+	}()
+	return out
+}
+
+func Filter[T any](data <-chan T, predicate func(T) bool, size int) <-chan T {
+	out := make(chan T, size)
+	go func() {
+		for d := range data {
+			if predicate(d) {
+				out <- d
+			}
+		}
 		close(out)
 	}()
 	return out
