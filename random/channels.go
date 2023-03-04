@@ -28,6 +28,23 @@ func TakeRandomFromChannel[T any](s <-chan T, take int) <-chan T {
 	return res
 }
 
+func TakeRandomFromSlice[T any](slice []T, take int) []T {
+	if take == 0 {
+		return make([]T, 0)
+	}
+	sliceLength := len(slice)
+	if take >= sliceLength {
+		return slice
+	}
+	randomArticles := make([]T, 0, take)
+	for i := 0; i < take; i++ {
+		index := randWithSeed.Intn(sliceLength)
+		randomArticles = append(randomArticles, slice[index])
+	}
+
+	return randomArticles
+}
+
 func TakeRandomToSlice[T any](s <-chan T, take int) []T {
 	if take == 0 {
 		return make([]T, 0)

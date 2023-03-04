@@ -84,3 +84,29 @@ func TestTakeRandomTwiceToSlice(t *testing.T) {
 
 	assert.NotEqual(t, subject, subject2)
 }
+
+func TestTakeRandomFromSlice(t *testing.T) {
+	numbers := channels.RangeInt(0, 10)
+
+	subject := TakeRandomFromSlice(numbers, 2)
+
+	assert.Len(t, subject, 2)
+}
+
+func TestTakeRandomWhenStreamHasSmallerElementsQuantityThanTakeParamFromSlice(t *testing.T) {
+	numbers := channels.RangeInt(0, 10)
+	subject := TakeRandomFromSlice(numbers, 20)
+
+	assert.Len(t, subject, 10)
+}
+
+func TestTakeRandomTwiceFromSlice(t *testing.T) {
+	numbers := channels.RangeInt(0, 10)
+
+	subject := TakeRandomFromSlice(numbers, 2)
+	subject2 := TakeRandomFromSlice(numbers, 2)
+	assert.Len(t, subject, 2)
+	assert.Len(t, subject2, 2)
+
+	assert.NotEqual(t, subject, subject2)
+}
