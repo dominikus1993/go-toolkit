@@ -3,27 +3,45 @@ package random
 import (
 	"math/rand"
 	"time"
+
+	"github.com/dominikus1993/go-toolkit/channels"
 )
 
 var randWithSeed *rand.Rand = rand.New(
 	rand.NewSource(time.Now().UnixNano()))
 
-func TakeRandom[T any](s <-chan T, take int) <-chan T {
+func TakeRandomFromChannel[T any](s <-chan T, take int) <-chan T {
 	res := make(chan T, take)
 	go func() {
 		defer close(res)
-		itemsStreamed := 0
-		for v := range s {
-			if itemsStreamed >= take {
-				return
-			}
-			num := randWithSeed.Int()
-			if num%2 == 0 {
-				itemsStreamed = itemsStreamed + 1
-				res <- v
-			}
+		slice := channels.ToSlice(s)
+		sliceLength := len(slice)
+		var takeNum = take
+		if take >= sliceLength {
+			takeNum = sliceLength
 		}
-		close(res)
+		for i := 0; i < takeNum; i++ {
+			index := randWithSeed.Intn(sliceLength)
+			res <- slice[index]
+		}
 	}()
 	return res
+}
+
+func TakeRandomToSlice[T any](s <-chan T, take int) []T {
+	if take == 0 {
+		return make([]T, 0)
+	}
+	slice := channels.ToSlice(s)
+	sliceLength := len(slice)
+	if take >= sliceLength {
+		return slice
+	}
+	randomArticles := make([]T, 0, take)
+	for i := 0; i < take; i++ {
+		index := randWithSeed.Intn(sliceLength)
+		randomArticles = append(randomArticles, slice[index])
+	}
+
+	return randomArticles
 }
