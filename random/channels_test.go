@@ -110,3 +110,17 @@ func TestTakeRandomTwiceFromSlice(t *testing.T) {
 
 	assert.NotEqual(t, subject, subject2)
 }
+
+func TestGenerateUniqueRandomNumbers(t *testing.T) {
+	subject := generateUniqueRandomNumbers(2, 10)
+	assert.Len(t, subject, 2)
+
+	// Check if all numbers are unique
+	for i, a := range subject {
+		for j, b := range subject {
+			if i != j {
+				assert.NotEqual(t, a, b)
+			}
+		}
+	}
+}
