@@ -20,8 +20,8 @@ func TakeRandomFromChannel[T any](s <-chan T, take int) <-chan T {
 		if take >= sliceLength {
 			takeNum = sliceLength
 		}
-		for i := 0; i < takeNum; i++ {
-			index := randWithSeed.Intn(sliceLength)
+		randomIndexes := generateUniqueRandomNumbers(takeNum, sliceLength)
+		for _, index := range randomIndexes {
 			res <- slice[index]
 		}
 	}()
@@ -38,7 +38,7 @@ func TakeRandomFromSlice[T any](slice []T, take int) []T {
 	}
 	randomIndexes := generateUniqueRandomNumbers(take, sliceLength)
 	randomArticles := make([]T, 0, take)
-	for index := range randomIndexes {
+	for _, index := range randomIndexes {
 		randomArticles = append(randomArticles, slice[index])
 	}
 
@@ -56,7 +56,7 @@ func TakeRandomToSlice[T any](s <-chan T, take int) []T {
 	}
 	randomIndexes := generateUniqueRandomNumbers(take, sliceLength)
 	randomArticles := make([]T, 0, take)
-	for index := range randomIndexes {
+	for _, index := range randomIndexes {
 		randomArticles = append(randomArticles, slice[index])
 	}
 
