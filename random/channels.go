@@ -36,9 +36,9 @@ func TakeRandomFromSlice[T any](slice []T, take int) []T {
 	if take >= sliceLength {
 		return slice
 	}
+	randomIndexes := generateUniqueRandomNumbers(take, sliceLength)
 	randomArticles := make([]T, 0, take)
-	for i := 0; i < take; i++ {
-		index := randWithSeed.Intn(sliceLength)
+	for index := range randomIndexes {
 		randomArticles = append(randomArticles, slice[index])
 	}
 
@@ -54,11 +54,24 @@ func TakeRandomToSlice[T any](s <-chan T, take int) []T {
 	if take >= sliceLength {
 		return slice
 	}
+	randomIndexes := generateUniqueRandomNumbers(take, sliceLength)
 	randomArticles := make([]T, 0, take)
-	for i := 0; i < take; i++ {
-		index := randWithSeed.Intn(sliceLength)
+	for index := range randomIndexes {
 		randomArticles = append(randomArticles, slice[index])
 	}
 
 	return randomArticles
+}
+
+func generateUniqueRandomNumbers(n, max int) []int {
+	set := make(map[int]bool)
+	var result []int
+	for len(set) < n {
+		value := randWithSeed.Intn(max)
+		if !set[value] {
+			set[value] = true
+			result = append(result, value)
+		}
+	}
+	return result
 }
