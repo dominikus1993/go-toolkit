@@ -3,6 +3,7 @@ package channels
 func Uniq[T comparable](s <-chan T, size int) <-chan T {
 	res := make(chan T, size)
 	go func() {
+		defer close(res)
 		seen := make(map[T]bool)
 		for v := range s {
 			if _, ok := seen[v]; !ok {
@@ -10,7 +11,6 @@ func Uniq[T comparable](s <-chan T, size int) <-chan T {
 				res <- v
 			}
 		}
-		close(res)
 	}()
 	return res
 }
@@ -18,6 +18,7 @@ func Uniq[T comparable](s <-chan T, size int) <-chan T {
 func UniqBy[T any, TKey comparable](s <-chan T, f func(T) TKey, size int) <-chan T {
 	res := make(chan T, size)
 	go func() {
+		defer close(res)
 		seen := make(map[TKey]bool)
 		for v := range s {
 			key := f(v)
@@ -26,7 +27,6 @@ func UniqBy[T any, TKey comparable](s <-chan T, f func(T) TKey, size int) <-chan
 				res <- v
 			}
 		}
-		close(res)
 	}()
 	return res
 }
