@@ -2,16 +2,28 @@ package channels
 
 import (
 	"context"
+	"iter"
 	"sync"
 )
 
 func FromSlice[T any](s []T) <-chan T {
 	res := make(chan T)
 	go func() {
+		defer close(res)
 		for _, v := range s {
 			res <- v
 		}
-		close(res)
+	}()
+	return res
+}
+
+func FromSeq[T any](s iter.Seq[T]) <-chan T {
+	res := make(chan T)
+	go func() {
+		defer close(res)
+		for v := range s {
+			res <- v
+		}
 	}()
 	return res
 }
@@ -27,10 +39,10 @@ func ToSlice[T any](s <-chan T) []T {
 func MapFromSlice[T any, TMap any](s []T, fmap func(el T) TMap, size int) <-chan TMap {
 	res := make(chan TMap, size)
 	go func() {
+		defer close(res)
 		for _, v := range s {
 			res <- fmap(v)
 		}
-		close(res)
 	}()
 	return res
 }
@@ -38,10 +50,10 @@ func MapFromSlice[T any, TMap any](s []T, fmap func(el T) TMap, size int) <-chan
 func Map[T any, TMap any](s <-chan T, fmap func(el T) TMap, size int) <-chan TMap {
 	res := make(chan TMap, size)
 	go func() {
+		defer close(res)
 		for v := range s {
 			res <- fmap(v)
 		}
-		close(res)
 	}()
 	return res
 }
@@ -73,12 +85,12 @@ func FanIn[T any](ctx context.Context, stream ...<-chan T) <-chan T {
 func Filter[T any](data <-chan T, predicate func(T) bool, size int) <-chan T {
 	out := make(chan T, size)
 	go func() {
+		defer close(out)
 		for d := range data {
 			if predicate(d) {
 				out <- d
 			}
 		}
-		close(out)
 	}()
 	return out
 }

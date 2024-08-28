@@ -22,6 +22,15 @@ func TestToSlice(t *testing.T) {
 	assert.ElementsMatch(t, RangeInt(0, 10), result)
 }
 
+func TestFromSeq(t *testing.T) {
+	seqOfInt := IntSeq(0, 10)
+	numbers := FromSeq(seqOfInt)
+
+	result := ToSlice(numbers)
+	assert.Len(t, result, 10)
+	assert.ElementsMatch(t, RangeInt(0, 10), result)
+}
+
 func TestMapFromSlice(t *testing.T) {
 	numbers := []int{1, 2, 3, 4}
 

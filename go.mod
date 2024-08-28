@@ -1,10 +1,10 @@
 module github.com/dominikus1993/go-toolkit
 
-go 1.21
+go 1.23
 
 require (
-	github.com/google/uuid v1.5.0
-	github.com/stretchr/testify v1.8.4
+	github.com/google/uuid v1.6.0
+	github.com/stretchr/testify v1.9.0
 )
 
 require (
