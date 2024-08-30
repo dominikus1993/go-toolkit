@@ -75,6 +75,16 @@ func TestFanIn(t *testing.T) {
 	assert.ElementsMatch(t, RangeInt(1, 20), subject)
 }
 
+func TestFanInBounded(t *testing.T) {
+	numbers := FromSlice(RangeInt(1, 10))
+	numbers2 := FromSlice(RangeInt(10, 20))
+
+	result := FanInBounded(context.TODO(), 20, numbers, numbers2)
+	subject := ToSlice(result)
+	assert.Len(t, subject, 19)
+	assert.ElementsMatch(t, RangeInt(1, 20), subject)
+}
+
 func BenchmarkFanIn(b *testing.B) {
 	ctx := context.TODO()
 	for n := 0; n < b.N; n++ {
