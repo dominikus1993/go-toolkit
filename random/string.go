@@ -1,24 +1,30 @@
 package random
 
 import (
-	"math/rand"
-	"time"
+	"crypto/rand"
+	"errors"
+	"math/big"
 )
 
 const charset = "abcdefghijklmnopqrstuvwxyz" +
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-var seededRand *rand.Rand = rand.New(
-	rand.NewSource(time.Now().UnixNano()))
-
-func StringWithCharset(length int, charset string) string {
-	b := make([]byte, length)
-	for i := range b {
-		b[i] = charset[seededRand.Intn(len(charset))]
+func StringWithCharset(length int, charset string) (string, error) {
+	if length < 0 {
+		return "", errors.New("length smaller than 0")
 	}
-	return string(b)
+	b := make([]byte, length)
+	len := big.NewInt(int64(len(charset)))
+	for i := range b {
+		a, err := rand.Int(rand.Reader, len)
+		if err != nil {
+			return "", err
+		}
+		b[i] = charset[a.Int64()]
+	}
+	return string(b), nil
 }
 
-func String(length int) string {
+func String(length int) (string, error) {
 	return StringWithCharset(length, charset)
 }
